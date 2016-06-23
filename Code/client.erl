@@ -1,2 +1,10 @@
 -module(client).
--export([]).
+-export([start/1, start/2]).
+
+
+start(host)->
+  asd.
+
+start(host,clientName)->
+  asd.
+

@@ -1,4 +1,21 @@
 
+
+
+## Server
+El server recibira 4 mensajes basicos:
+
+### Subscribe
+El cual informa que quien envia el mensaje desea ser suscripto a un canal especifico.
+### Unsubscribe
+El cual informa que quien envia el mensaje desea revocar su suscripcion a un canal especifico.
+### Emit
+El cual informa que se debe realizar un envio de un mensaje a todos los "Clientes" suscriptos a ese canal.
+### Broadcast
+El cual informa que se debe realizar un envio de un mensaje a todos los "Clientes" conectados.
+
+## Client
+El cliente podra Suscribirse, Revocar suscripciones y emitir a un canal especifico.
+
 # Sobre MQTT
 
 ### What is MQTT?
