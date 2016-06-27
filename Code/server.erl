@@ -3,22 +3,45 @@
 
 
 start()->
-  spawnear.
-start(configuracion)->
-  spawnear_con_configuracion.
+  Configuracion = configuracionDefault(),
+  Sender = sender:start(),
+  spawn(fun() -> init([],[],[],0,Configuracion,Sender) end).
 
-init()->
-  loop(suscripciones, clientes, mensajes_por_enviar, id_Mensaje_siguiente, opciones).
+start(Configuracion)->
+  Sender = sender:start(),
+  spawn(fun() -> init([],[],[],0,Configuracion,Sender) end).
+
+configuracionDefault()->
+  [].
+
+init(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender)->
+  loop(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender).
 
 
-loop(suscripciones, clientes, mensajes_por_enviar, id_Mensaje_siguiente, opciones)->
+loop(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender)->
   receive
     {subscribe, {Channel, Client}}->
-      suscribir;
+      NuevasSuscripciones = suscribir(Suscripciones, Channel, Client),
+      loop(NuevasSuscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender);
     {unsubscribe, {Channel, Client}}->
-      desuscribir;
+      NuevasSuscripciones = suscribir(Suscripciones, Channel, Client),
+      loop(NuevasSuscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender);
     {emit, {Channel, Client, Message}}->
-      emitir;
+      emitir(Channel, Client, Message),
+      loop(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender);
     {broadcast, {Client, Message}}->
-      broadcastear
+      broadcastear,
+      loop(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuracion,Sender)
   end.
+
+suscribir(Suscripciones, Channel, Client)->
+  %Buscar si existe la suscripcion en la lista.
+  %Si existe agregarlo en la lista y si no crear el channel y ponerla.
+  ok.
+desuscribir(Suscripciones, Channel, Client)->
+  %Buscar el channel en la lista y borrar el client del channel.
+  ok.
+
+emitir(Channel, Client, Message)->
+  %Informar que hay para emitir.
+  ok.
