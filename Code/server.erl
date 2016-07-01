@@ -37,11 +37,28 @@ loop(Suscripciones, Clientes, MensajesPorEnviar, IdMensajeSiguiente, Configuraci
 suscribir(Suscripciones, Channel, Client)->
   %Buscar si existe la suscripcion en la lista.
   %Si existe agregarlo en la lista y si no crear el channel y ponerla.
-  ok.
+  case dict:find(Channel, Suscripciones) of
+    {ok, SusripcionesDelCanal} ->
+        case lists:keyfind(Client,1,SusripcionesDelCanal) of
+          false ->
+              list:append(Client, SusripcionesDelCanal)
+        end,
+    error ->
+        dict:append(Channel, [Client], Suscripciones)
+  end.
+
 desuscribir(Suscripciones, Channel, Client)->
   %Buscar el channel en la lista y borrar el client del channel.
-  ok.
+  case dict:find(Channel, Suscripciones) of
+    {ok, SusripcionesDelCanal} ->
+        case lists:keyfind(Client,1,SusripcionesDelCanal) of
+          false ->
+              list:keydelete(Client,1,SusripcionesDelCanal)
+        end
+  end.
 
-emitir(Channel, Client, Message)->
+emitir(Channel, Suscripciones, Client, Router, Message)->
   %Informar que hay para emitir.
-  ok.
+  case dict:find(Channel, Suscripciones) of
+    {ok, SusripcionesDelCanal} -> 
+  end.
