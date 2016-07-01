@@ -1,5 +1,24 @@
 
+#COMPORTAMIENTO DE LOS DISTINTOS MODULOS
 
+### client:
+
+El client necesitara unicamente 2 datos para funcionar:
+-Nombre de host
+-Puerto
+
+Sus funciones son:
+
+-Emit: Envia el mensaje al servidor.
+-Subscribe: Envia la peticion de suscripcion al servidor del canal deseado.
+-Desubscribe: Envia la peticion de revocar la suscripcion al servidor 
+del canal deseado.88i  mmmiuikki
+
+### server:
+
+
+
+#DOCUMENTACION
 
 ## Server
 El server recibira 4 mensajes basicos:
