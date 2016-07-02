@@ -23,10 +23,10 @@ loop(Router, Server)->
       Server ! {emit, Msg , self()},
       loop(Router, Server);
     {subscribe, Channel}->
-      Server ! {subscribe, Channel , self()},
+      Server ! {subscribe, {Channel , self()}},
       loop(Router, Server);
     {desubscribe, Channel}->
-      Server ! {desubscribe, Channel , self()},
+      Server ! {desubscribe, {Channel , self()}},
       loop(Router, Server);
     {msg, Msg}->
       procesarMensajeYEnviarACK(Msg, Server),
