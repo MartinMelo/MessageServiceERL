@@ -39,7 +39,7 @@ removerServer(Server, Servers)->
 
 %Suscribe el cliente al channel deseado.
 suscribir(Suscripciones, Channel, Client, Servers)->
-  suscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers),
+  suscribirEnTodosLosServers(Channel, Client,Servers),
   %Buscar si existe la suscripcion en la lista.
   %Si existe agregarlo en la lista y si no crear el channel y ponerla.
   case dict:find(Channel, Suscripciones) of
@@ -52,12 +52,12 @@ suscribir(Suscripciones, Channel, Client, Servers)->
         dict:append(Channel, [Client], Suscripciones)
   end.
 
-suscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers)->
+suscribirEnTodosLosServers(Channel, Client,Servers)->
   lists:map(fun(Server)-> Server ! {subscribe, {Channel, Client}} end, Servers).
 
 %desuscribe el cliente del channel deseado.
 desuscribir(Suscripciones, Channel, Client, Servers)->
-  desuscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers),
+  desuscribirEnTodosLosServers(Channel, Client,Servers),
   %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
@@ -65,11 +65,11 @@ desuscribir(Suscripciones, Channel, Client, Servers)->
     error->Suscripciones
   end.
 
-desuscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers)->
+desuscribirEnTodosLosServers(Channel, Client,Servers)->
   lists:map(fun(Server)-> Server ! {unsubscribe, {Channel, Client}} end, Servers).
 
 emitir(Channel, Suscripciones, Client, Message, Sender, Servers)->
-  emitirAServers(Channel, Suscripciones, Client, Message, Sender, Servers),
+  emitirAServers(Channel, Client, Message, Sender, Servers),
   ClientesSuscriptos = obtenerClienteSuscriptos(Channel, Suscripciones,Client),
   emitirAClientes(ClientesSuscriptos,Message,Sender).
 
@@ -87,7 +87,7 @@ obtenerClienteSuscriptos(Channel, Suscripciones, Client)->
 emitirAClientes(ClientesSuscriptos,Message,Sender)->
   lists:map(fun(Cliente)-> Sender ! {send, {Cliente, Message}} end, ClientesSuscriptos).
 
-emitirAServers(Channel, Suscripciones, Client, Message, Sender, Servers)->
+emitirAServers(Channel,Client, Message, Sender, Servers)->
   lists:map(fun(Server)-> Server ! {emit, {Channel, Client, Message, imServer}} end, Servers).
 
 
