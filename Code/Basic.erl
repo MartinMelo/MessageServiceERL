@@ -10,7 +10,7 @@ start()->
 
 
 agregarServidoresAlRouter(Servers, Router)->
-  lists:foreach(fun(Server)-> Router ! {addBrother, Server} end, Servers).
+  lists:foreach(fun(Server)-> Router ! {register, Server} end, Servers).
 
 crearClientes(Router)->
 [client:start(Router),client:start(Router),client:start(Router)].
@@ -21,5 +21,8 @@ crearServidores() ->
 
 %%%%%%%%%%%%%%%%%%%%LOGICA DEL TEST%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 correrTest(Clientes)->
-  lists:foreach(fun(Cliente)-> Cliente ! {subscribe , "#"} end, Clientes).
+  lists:foreach(fun(Cliente)-> Cliente ! {subscribe , "#"} end, Clientes),
+  Cliente = lists:nth(1, Clientes),
+  Cliente ! {emit, "OLA K ASE! BO!"}.
+
 
