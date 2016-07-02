@@ -1,42 +1,34 @@
 -module(server).
--export([start/0, start/1]).
+-export([start/0]).
 
 
 start()->
-  Configuracion = configuracionDefault(),
   Sender = sender:start(),
   spawn(fun() -> init([],[],[],Sender) end).
 
-start(Configuracion)->
-  Sender = sender:start(),
-  spawn(fun() -> init([],[],[],Sender) end).
-
-configuracionDefault()->
-  [].
-
-init(Suscripciones, Clientes, MensajesPorEnviar, Sender)->
-  loop(Suscripciones, Clientes, MensajesPorEnviar, Sender).
+init(Suscripciones, Clientes, Servers, Sender)->
+  loop(Suscripciones, Clientes, Servers,Sender).
 
 
-loop(Suscripciones, Clientes, Servers, MensajesPorEnviar, Sender)->
+loop(Suscripciones, Clientes, Servers, Sender)->
   receive
     {addServer, Server}->
-      loop(Suscripciones, Clientes, [Server | Servers], MensajesPorEnviar, Sender);
+      loop(Suscripciones, Clientes, [Server | Servers], Sender);
     {removeServer, Server}->
       ListaNueva = removerServer(Server, Servers),
-      loop(Suscripciones, Clientes, ListaNueva, MensajesPorEnviar, Sender);
+      loop(Suscripciones, Clientes, ListaNueva, Sender);
     {subscribe, {Channel, Client}}->
       NuevasSuscripciones = suscribir(Suscripciones, Channel, Client,Servers),
-      loop(NuevasSuscripciones, Clientes, Servers, MensajesPorEnviar, Sender);
+      loop(NuevasSuscripciones, Clientes, Servers, Sender);
     {unsubscribe, {Channel, Client}}->
       NuevasSuscripciones = desuscribir(Suscripciones, Channel, Client,Servers),
-      loop(NuevasSuscripciones, Clientes, Servers, MensajesPorEnviar, Sender);
+      loop(NuevasSuscripciones, Clientes, Servers, Sender);
     {emit, {Channel, Client, Message}}->
       emitir(Channel, Suscripciones, Client, Message, Sender,Servers),
-      loop(Suscripciones, Clientes, Servers, MensajesPorEnviar, Sender);
+      loop(Suscripciones, Clientes, Servers, Sender);
     {emit, {Channel, Client, Message, imServer}}->
       emitir(Channel, Suscripciones, Client, Message, Sender,Servers),
-      loop(Suscripciones, Clientes, Servers, MensajesPorEnviar, Sender)
+      loop(Suscripciones, Clientes, Servers, Sender)
   end.
 
 %Remueve el server de la lista de servers.
@@ -66,7 +58,7 @@ desuscribir(Suscripciones, Channel, Client, Servers)->
   %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
-      list:keydelete(Client,1,SuscripcionesDelCanal);
+      lists:keydelete(Client,1,SuscripcionesDelCanal);
     error->Suscripciones
   end.
 
