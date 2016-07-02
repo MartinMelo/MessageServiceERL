@@ -4,35 +4,40 @@
 
 start()->
   Sender = sender:start(),
-  spawn(fun() -> init([],[],[],Sender) end).
+  spawn(fun() -> init([],[],Sender) end).
 
-init(Suscripciones, Clientes, Servers, Sender)->
-  loop(Suscripciones, Clientes, Servers,Sender).
+init(Suscripciones, Servers, Sender)->
+  loop(Suscripciones, Servers,Sender).
 
 
-loop(Suscripciones, Clientes, Servers, Sender)->
+loop(Suscripciones, Servers, Sender)->
   receive
     {brothers, ListaDeHermanos}->
-      loop(Suscripciones, Clientes, ListaDeHermanos, Sender);
+      loop(Suscripciones, ListaDeHermanos, Sender);
     {addBrother, Server}->
-      loop(Suscripciones, Clientes, [Server | Servers], Sender);
+      loop(Suscripciones, [Server | Servers], Sender);
     {removeBrother, Server}->
       ListaNueva = removerServer(Server, Servers),
-      loop(Suscripciones, Clientes, ListaNueva, Sender);
+      loop(Suscripciones, ListaNueva, Sender);
     {subscribe, {Channel, Client}}->
       NuevasSuscripciones = suscribir(Suscripciones, Channel, Client,Servers),
-      loop(NuevasSuscripciones, Clientes, Servers, Sender);
+      loop(NuevasSuscripciones, Servers, Sender);
     {unsubscribe, {Channel, Client}}->
       NuevasSuscripciones = desuscribir(Suscripciones, Channel, Client,Servers),
-      loop(NuevasSuscripciones, Clientes, Servers, Sender);
+      loop(NuevasSuscripciones, Servers, Sender);
     {emit, {Channel, Client, Message}}->
       emitir(Channel, Suscripciones, Client, Message, Sender,Servers),
-      loop(Suscripciones, Clientes, Servers, Sender);
+      loop(Suscripciones, Servers, Sender);
     {emit, {Channel, Client, Message, imServer}}->
-      emitir(Channel, Suscripciones, Client, Message, Sender,Servers),
-      loop(Suscripciones, Clientes, Servers, Sender)
+      emitir(Channel, Suscripciones, Client, Message, Sender),
+      loop(Suscripciones, Servers, Sender);
+    state ->
+      imprimirEstado(Suscripciones, Servers)
   end.
 
+imprimirEstado(Suscripciones, Servers)->
+  io:format("Servers disponibles: ~n", Servers),
+  io:format("Suscripciones disponibles: ~n", Suscripciones).
 %Remueve el server de la lista de servers.
 removerServer(Server, Servers)->
   lists:keydelete(Server, 1, Servers).
