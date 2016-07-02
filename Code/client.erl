@@ -35,5 +35,6 @@ loop(Router, Server)->
 
 procesarMensajeYEnviarACK(Msg , Server)->
   %Imprimir informacion del mensaje,
+  io:format("Annyong"),
   IdMsg = asd,
   Server ! {ack, IdMsg}.

@@ -12,6 +12,6 @@ init()->
 loop()->
   receive
     {send, {Msg, Client}}->
-      Client ! Msg
+      Client ! {msg, Msg}
   end.
 
