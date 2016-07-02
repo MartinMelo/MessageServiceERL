@@ -39,7 +39,7 @@ removerServer(Server, Servers)->
 
 %Suscribe el cliente al channel deseado.
 suscribir(Suscripciones, Channel, Client, Servers)->
-  suscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers),
+  suscribirEnTodosLosServers(Channel, Client,Servers),
   %Buscar si existe la suscripcion en la lista.
   %Si existe agregarlo en la lista y si no crear el channel y ponerla.
   case dict:find(Channel, Suscripciones) of
@@ -52,7 +52,7 @@ suscribir(Suscripciones, Channel, Client, Servers)->
         dict:append(Channel, [Client], Suscripciones)
   end.
 
-suscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers)->
+suscribirEnTodosLosServers(Channel, Client,Servers)->
   lists:map(fun(Server)-> Server ! {subscribe, {Channel, Client}} end, Servers).
 
 %desuscribe el cliente del channel deseado.
