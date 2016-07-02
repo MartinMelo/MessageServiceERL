@@ -4,7 +4,7 @@
 
 start()->
   Sender = sender:start(),
-  spawn(fun() -> init([],[],Sender) end).
+  spawn(fun() -> init(dict:new(),[],Sender) end).
 
 init(Suscripciones, Servers, Sender)->
   loop(Suscripciones, Servers,Sender).
@@ -51,7 +51,12 @@ suscribir(Suscripciones, Channel, Client, Servers)->
     {ok, SuscripcionesDelCanal} ->
         case lists:keyfind(Client,1,SuscripcionesDelCanal) of
           false ->
-              lists:append(Client, SuscripcionesDelCanal)
+            try
+              ClientesNuevos = [Client | SuscripcionesDelCanal],
+              dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
+            catch
+              badarg -> io:format("BAD ARG")
+            end
         end;
     error ->
         dict:append(Channel, [Client], Suscripciones)
