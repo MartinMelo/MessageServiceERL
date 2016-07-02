@@ -62,7 +62,7 @@ suscribirEnTodosLosServers(Channel, Client,Servers)->
 
 %desuscribe el cliente del channel deseado.
 desuscribir(Suscripciones, Channel, Client, Servers)->
-  desuscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers),
+  desuscribirEnTodosLosServers(Channel, Client,Servers),
   %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
@@ -70,11 +70,11 @@ desuscribir(Suscripciones, Channel, Client, Servers)->
     error->Suscripciones
   end.
 
-desuscribirEnTodosLosServers(Suscripciones, Channel, Client,Servers)->
+desuscribirEnTodosLosServers(Channel, Client,Servers)->
   lists:map(fun(Server)-> Server ! {unsubscribe, {Channel, Client}} end, Servers).
 
 emitir(Channel, Suscripciones, Client, Message, Sender, Servers)->
-  emitirAServers(Channel, Suscripciones, Client, Message, Sender, Servers),
+  emitirAServers(Channel, Client, Message, Sender, Servers),
   ClientesSuscriptos = obtenerClienteSuscriptos(Channel, Suscripciones,Client),
   emitirAClientes(ClientesSuscriptos,Message,Sender).
 
@@ -92,7 +92,7 @@ obtenerClienteSuscriptos(Channel, Suscripciones, Client)->
 emitirAClientes(ClientesSuscriptos,Message,Sender)->
   lists:map(fun(Cliente)-> Sender ! {send, {Cliente, Message}} end, ClientesSuscriptos).
 
-emitirAServers(Channel, Suscripciones, Client, Message, Sender, Servers)->
+emitirAServers(Channel,Client, Message, Sender, Servers)->
   lists:map(fun(Server)-> Server ! {emit, {Channel, Client, Message, imServer}} end, Servers).
 
 
