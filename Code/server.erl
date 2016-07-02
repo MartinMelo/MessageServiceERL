@@ -44,7 +44,7 @@ suscribir(Suscripciones, Channel, Client, Servers)->
     {ok, SuscripcionesDelCanal} ->
         case lists:keyfind(Client,1,SuscripcionesDelCanal) of
           false ->
-              list:append(Client, SuscripcionesDelCanal)
+              lists:append(Client, SuscripcionesDelCanal)
         end;
     error ->
         dict:append(Channel, [Client], Suscripciones)
