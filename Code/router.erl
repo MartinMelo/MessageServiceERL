@@ -22,8 +22,8 @@ loop(Servers)->
       loop(Servers)
   end.
 
-informarACadaServerElNuevoHermano(Servers, Server)->
-  lists:foreach(fun()-> Server ! {addBrother , Server} end, Servers).
+informarACadaServerElNuevoHermano(Servers, ServerNuevo)->
+  lists:foreach(fun(Server)-> Server ! {addBrother , ServerNuevo} end, Servers).
 
 %Elimina el server de la lista.
 quitarServer(Servers, Server)->
