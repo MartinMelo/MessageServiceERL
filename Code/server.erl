@@ -12,9 +12,11 @@ init(Suscripciones, Clientes, Servers, Sender)->
 
 loop(Suscripciones, Clientes, Servers, Sender)->
   receive
-    {addServer, Server}->
+    {brothers, ListaDeHermanos}->
+      loop(Suscripciones, Clientes, ListaDeHermanos, Sender);
+    {addBrother, Server}->
       loop(Suscripciones, Clientes, [Server | Servers], Sender);
-    {removeServer, Server}->
+    {removeBrother, Server}->
       ListaNueva = removerServer(Server, Servers),
       loop(Suscripciones, Clientes, ListaNueva, Sender);
     {subscribe, {Channel, Client}}->
