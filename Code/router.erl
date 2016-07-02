@@ -10,6 +10,8 @@ init()->
 loop(Servers)->
   receive
     {register, Server}->
+      Server ! {brothers , Servers},
+      informarACadaServerElNuevoHermano(Servers, Server),
       loop([Server |Servers]);%Lo meto en la lista.
     {unregister, Server}->
       ServersUpdated = quitarServer(Servers, Server),
@@ -19,6 +21,9 @@ loop(Servers)->
       Who ! {server , Server},
       loop(Servers)
   end.
+
+informarACadaServerElNuevoHermano(Servers, Server)->
+  lists:foreach(fun()-> Server ! {addBrother , Server} end, Servers).
 
 %Elimina el server de la lista.
 quitarServer(Servers, Server)->
