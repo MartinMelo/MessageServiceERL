@@ -20,7 +20,7 @@ enviarPeticionARouter(Router)->
 loop(Router, Server)->
   receive
     {emit, Msg}->
-      Server ! {emit, Msg , self()},
+      Server ! {emit, Channel, self(), Msg},
       loop(Router, Server);
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
