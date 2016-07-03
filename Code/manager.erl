@@ -7,7 +7,15 @@ start(CantidadServers) ->
 	%Num = length(Servers),
 	%io:format("Hello world! ~p~n",[Num]),
   	agregarServidoresAlRouter(Servers, Router),
-  	client:start(Router).
+  	spawn(fun()-> init(Router) end).
+
+init(Router) ->
+	receive
+    	client-> 
+    		io:format("chan"),
+    		client:start(Router),
+    		init(Router)
+  	end.
 
 crearNServers(Servers, 0)->
 	Servers;
@@ -25,6 +33,7 @@ suscribir(Channel, Cliente) ->
 enviarMensaje(Cliente, Channel, Msg) ->
 	Cliente ! {emit, Channel, Msg}.
 
-%> Client = manager:start(5) % cantidad de servidores
-%> manager:suscribir("amigos",Client).
+%> M = manager:start(2). % cantidad de servidores
+%> C= M ! client. % crea un cliente y lo agrega al router
+%> manager:suscribir("amigos",C).
 %> manager:enviarMensaje(C, "amigos","hola").
