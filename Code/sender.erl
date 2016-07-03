@@ -11,7 +11,7 @@ init()->
 %Recibe mensajes para enviar y los publica de una.
 loop()->
   receive
-    {send, {Msg, Client}}->
+    {send, {Client, Msg}}->
       Client ! {msg, Msg}
   end.
 

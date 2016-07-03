@@ -1,5 +1,5 @@
 -module(manager).
--export([start/1]).
+-export([start/1, suscribir/2, enviarMensaje/3]).
 
 start(CantidadServers) ->
 	Servers = crearNServers([], CantidadServers),
@@ -19,8 +19,12 @@ crearNServers(Servers, CantidadServers)->
 agregarServidoresAlRouter(Servers, Router)->
   lists:foreach(fun(Server)-> Router ! {register, Server} end, Servers).
 
+suscribir(Channel, Cliente) ->
+	Cliente ! {subscribe,Channel}.
 
+enviarMensaje(Cliente, Channel, Msg) ->
+	Cliente ! {emit, Channel, Msg}.
 
-%> client = manager:start(5) % cantidad de servidores
-%> client ! {"amigos"}
-%> client:send("amigos", "hola que hace")
+%> Client = manager:start(5) % cantidad de servidores
+%> manager:suscribir("amigos",Client).
+%> manager:enviarMensaje(C, "amigos","hola").

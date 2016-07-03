@@ -19,8 +19,8 @@ enviarPeticionARouter(Router)->
 
 loop(Router, Server)->
   receive
-    {emit, Msg}->
-      Server ! {emit, Channel, self(), Msg},
+    {emit, Channel, Msg}->
+      Server ! {emit, {Channel, self(), Msg}},
       loop(Router, Server);
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
@@ -35,6 +35,6 @@ loop(Router, Server)->
 
 procesarMensajeYEnviarACK(Msg , Server)->
   %Imprimir informacion del mensaje,
-  io:format("Annyong"),
+  io:format("Dice: ~p~n",[Msg]),
   IdMsg = asd,
   Server ! {ack, IdMsg}.
