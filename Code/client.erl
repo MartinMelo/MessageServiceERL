@@ -3,7 +3,8 @@
 
 
 start(Router)->
-  spawn(fun()-> init(Router) end).
+  Client = spawn(fun()-> init(Router) end),
+  register(client, Client).
 
 init(Router)->
   io:format("Conectando a Router ~n~p", [Router]),
