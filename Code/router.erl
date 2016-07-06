@@ -1,8 +1,9 @@
 -module(router).
--export([start/0]).
+-export([start/0,init/0]).
 
 start()->
-  spawn(fun()-> init() end).
+  Router = spawn(fun()-> init() end),
+  register(router, Router).
 
 init()->
   loop([]).
@@ -10,6 +11,7 @@ init()->
 loop(Servers)->
   receive
     {register, Server}->
+      io:format("Registrando"),
       Server ! {brothers , Servers},
       io:format("se ha registrado el server"),
       informarACadaServerElNuevoHermano(Servers, Server),
