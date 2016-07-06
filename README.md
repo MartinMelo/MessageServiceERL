@@ -61,3 +61,36 @@ The specification and other documentation are available via the Documentation pa
 Ask questions via one of the methods on the Community page.
 Try code via one of the projects on the Software page.
 Follow us on Twitter @mqttorg.
+
+
+#Como correrlo:
+
+consola router
+```erlang
+erl -name router@ip -setcookie asd
+R = router:start().
+```
+consola server
+```erlang
+erl -name server@ip -setcookie asd
+S = server:start().
+{router,'router@ip'} ! {register, S}.
+```
+consola cliente A
+```erlang
+erl -name clienteA@ip -setcookie asd
+Cliente = client:start({router,'router@ip')).
+Client ! {subscribe, "#"}.
+```
+consola cliente B
+```erlang
+erl -name clienteB@ip -setcookie asd
+Cliente = client:start({router,'router@ip')).
+Client ! {emit,"#","Mansae"}.
+```
+
+La consola del cliente A deberia imprimir:
+
+```
+(ClienteA@ip)>Mensaje recibido: Mansae
+```
