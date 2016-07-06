@@ -3,11 +3,10 @@
 
 
 start(Router)->
-  Client = spawn(fun()-> init(Router) end),
-  register(client, Client).
+  spawn(fun()-> init(Router) end).
 
 init(Router)->
-  io:format("Conectando a Router ~n~p", [Router]),
+  io:format("Conectando a Router ~p~n", [Router]),
   enviarPeticionARouter(Router),
   receive
     {server, Server}-> loop(Router, Server)
@@ -19,28 +18,20 @@ enviarPeticionARouter(Router)->
   Router ! {request, self()}.
 
 loop(Router, Server)->
-  io:format("escuchando..."),
   receive
     {emit, Channel, Msg}->
       Server ! {emit, {Channel, self(), Msg}},
-      io:format("el mensaje se a emitido"),
-
       loop(Router, Server);
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
-      io:format("suscripcion exitosa"),
       loop(Router, Server);
     {desubscribe, Channel}->
       Server ! {desubscribe, {Channel , self()}},
-      io:format("desuscripcion exitosa"),
       loop(Router, Server);
     {msg, Msg}->
-      procesarMensajeYEnviarACK(Msg, Server),
+      procesarMensaje(Msg),
       loop(Router, Server)
   end.
 
-procesarMensajeYEnviarACK(Msg , Server)->
-  %Imprimir informacion del mensaje,
-  io:format("Dice: ~p~n",[Msg]),
-  IdMsg = asd,
-  Server ! {ack, IdMsg}.
+procesarMensaje(Msg)->
+  io:format("Mensaje recibido: ~p~n",[Msg]).
