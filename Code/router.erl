@@ -11,20 +11,19 @@ init()->
 loop(Servers)->
   receive
     {register, Server}->
-      io:format("Registrando"),
+      io:format("register server with PID: ~p~n", [Server]),
       Server ! {brothers , Servers},
-      io:format("se ha registrado el server"),
       informarACadaServerElNuevoHermano(Servers, Server),
       loop([Server |Servers]);%Lo meto en la lista.
     {unregister, Server}->
+      io:format("unregister server with PID: ~p~n", [Server]),
       ServersUpdated = quitarServer(Servers, Server),
       loop(ServersUpdated);
     {request , Who}->
-      io:format("obteniendo servidor"),
+      io:format("server requested from client: ~p~n", [Who]),
       Server = getRandomServer(Servers),
-      io:format("servidor encontrado!"),
       Who ! {server , Server},
-      io:format("El servidor se ha regitrado"),
+      io:format("Server to connect: ~p~n", [Server]),
       loop(Servers)
   end.
 
