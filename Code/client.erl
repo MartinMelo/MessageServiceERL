@@ -18,15 +18,20 @@ enviarPeticionARouter(Router)->
   Router ! {request, self()}.
 
 loop(Router, Server)->
+  io:format("escuchando..."),
   receive
     {emit, Channel, Msg}->
       Server ! {emit, {Channel, self(), Msg}},
+      io:format("el mensaje se a emitido"),
+
       loop(Router, Server);
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
+      io:format("suscripcion exitosa"),
       loop(Router, Server);
     {desubscribe, Channel}->
       Server ! {desubscribe, {Channel , self()}},
+      io:format("desuscripcion exitosa"),
       loop(Router, Server);
     {msg, Msg}->
       procesarMensajeYEnviarACK(Msg, Server),

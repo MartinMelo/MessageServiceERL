@@ -11,14 +11,18 @@ loop(Servers)->
   receive
     {register, Server}->
       Server ! {brothers , Servers},
+      io:format("se ha registrado el server"),
       informarACadaServerElNuevoHermano(Servers, Server),
       loop([Server |Servers]);%Lo meto en la lista.
     {unregister, Server}->
       ServersUpdated = quitarServer(Servers, Server),
       loop(ServersUpdated);
     {request , Who}->
+      io:format("obteniendo servidor"),
       Server = getRandomServer(Servers),
+      io:format("servidor encontrado!"),
       Who ! {server , Server},
+      io:format("El servidor se ha regitrado"),
       loop(Servers)
   end.
 

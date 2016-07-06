@@ -12,6 +12,12 @@ init(Suscripciones, Servers, Sender)->
 
 loop(Suscripciones, Servers, Sender)->
   receive
+    {register, Router} ->
+      io:format("Registrandome..."),
+      Router ! {register, self()},
+      io:format("Registro exitoso!"),
+
+      loop(Suscripciones, Servers, Sender);
     {brothers, ListaDeHermanos}->
       loop(Suscripciones, ListaDeHermanos, Sender);
     {addBrother, Server}->
@@ -27,6 +33,7 @@ loop(Suscripciones, Servers, Sender)->
       loop(NuevasSuscripciones, Servers, Sender);
     {emit, {Channel, Client, Message}}->
       emitir(Channel, Suscripciones, Client, Message, Sender,Servers),
+      io:format("Mensaje emitido del server"),
       loop(Suscripciones, Servers, Sender);
     {emit, {Channel, Client, Message, imServer}}->
       emitir(Channel, Suscripciones, Client, Message, Sender),
