@@ -1,4 +1,4 @@
--module(basic).
+-module(test).
 -export([start/0]).
 
 start()->
@@ -13,7 +13,7 @@ agregarServidoresAlRouter(Servers, Router)->
   lists:foreach(fun(Server)-> Router ! {register, Server} end, Servers).
 
 crearClientes(Router)->
-[client:start(Router),client:start(Router),client:start(Router)].
+  [client:start(Router),client:start(Router),client:start(Router)].
 
 %Crea 4 Servers.
 crearServidores() ->
