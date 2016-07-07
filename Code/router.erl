@@ -24,8 +24,14 @@ loop(Servers)->
       Server = getRandomServer(Servers),
       Who ! {server , Server},
       io:format("Server to connect: ~p~n", [Server]),
+      loop(Servers);
+    cleanSubsFromServers ->
+      enviarCleanSubs(Servers),
       loop(Servers)
   end.
+
+enviarCleanSubs(Servers)->
+  lists:foreach(fun(Server)-> Server ! cleanSubs end, Servers).
 
 informarACadaServerElNuevoHermano(Servers, ServerNuevo)->
   lists:foreach(fun(Server)-> Server ! {addBrother , ServerNuevo} end, Servers).

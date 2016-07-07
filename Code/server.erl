@@ -42,6 +42,8 @@ loop(Suscripciones, Servers, Sender)->
       io:format("Emit recibed from another server ~n"),
       emitir(Channel, Suscripciones, Client, Message, Sender),
       loop(Suscripciones, Servers, Sender);
+    cleanSubs ->
+      loop(subscripter:new(), Servers, Sender);
     state ->
       io:format("State ~n"),
       imprimirEstado(Suscripciones, Servers)
