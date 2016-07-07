@@ -42,6 +42,19 @@ loop(Suscripciones, Servers, Sender)->
       io:format("Emit recibed from another server ~n"),
       emitir(Channel, Suscripciones, Client, Message, Sender),
       loop(Suscripciones, Servers, Sender);
+    {'DOWN', _ , process, Client, Info} ->
+      io:format("~w Disconnected; ~w~n", [Client, Info]),
+      io:format("Cleaning subscription from client ~n"),
+      NuevasSuscripciones = subscripter:unsubscribeAll(Client, Suscripciones),
+      loop(NuevasSuscripciones, Servers,Sender);
+    {connect, Client}->
+      monitor(process, Client),
+      loop(Suscripciones,Servers,Sender);
+    {disconnect, Client}->
+      io:format("Client ~w Disconnected; ~n", [Client]),
+      io:format("Cleaning subscription from client ~n"),
+      NuevasSuscripciones = subscripter:unsubscribeAll(Client, Suscripciones),
+      loop(Suscripciones,Servers,Sender);
     cleanSubs ->
       loop(subscripter:new(), Servers, Sender);
     state ->

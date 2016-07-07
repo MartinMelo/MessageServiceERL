@@ -9,7 +9,9 @@ init(Router)->
   io:format("Conectando a Router ~p~n", [Router]),
   enviarPeticionARouter(Router),
   receive
-    {server, Server}-> loop(Router, Server)
+    {server, Server}->
+      Server ! {connect, self()},
+      loop(Router, Server)
   end.
 
 
@@ -30,8 +32,13 @@ loop(Router, Server)->
       loop(Router, Server);
     {msg, Msg}->
       procesarMensaje(Msg),
-      loop(Router, Server)
+      loop(Router, Server);
+    disconnect->
+      Server ! {disconnect , self()},
+      closeMessage()
   end.
+
+closeMessage()->io:format("Connection closed.~n Good bye!!!!~n").
 
 procesarMensaje(Msg)->
   io:format("Mensaje recibido: ~p~n",[Msg]).

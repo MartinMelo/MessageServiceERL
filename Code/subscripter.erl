@@ -1,5 +1,5 @@
 -module(subscripter).
--export([new/0,subscribe/3,unsubscribe/3,clientesSubscriptos/3]).
+-export([new/0,subscribe/3,unsubscribe/3,clientesSubscriptos/3,allChannels/1,unsubscribeAll/2]).
 
 
 new()->
@@ -17,6 +17,7 @@ subscribe(Channel, Client, Suscripciones)->
       dict:append(Channel, Client, Suscripciones)
   end.
 
+%Desuscribe el cliente del channel dado.
 unsubscribe(Channel, Client, Suscripciones)->
 %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
@@ -26,9 +27,19 @@ unsubscribe(Channel, Client, Suscripciones)->
     error->Suscripciones
   end.
 
+%Devuelve los clientes suscriptos en este channel.
 clientesSubscriptos(Channel, Suscripciones, Client)->
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
       lists:keydelete(Client,1,SuscripcionesDelCanal);
     error-> []
   end.
+
+%Devuelve todos los channels disponibles.
+allChannels(Suscripciones)->
+  dict:fetch_keys(Suscripciones).
+
+%TODO: Foldear para eliminar todas las suscriciones del cliente.
+unsubscribeAll(Client, Suscripciones)->
+  %lists:foreach(fun(Channel)-> unsubscribe(Channel, Client, Suscripciones) end, allChannels(Suscripciones)).
+  Suscripciones.
