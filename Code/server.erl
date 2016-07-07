@@ -28,11 +28,11 @@ loop(Suscripciones, Servers, Sender)->
       loop(Suscripciones, ListaNueva, Sender);
     {subscribe, {Channel, Client}}->
       io:format("Client subscripted: ~p~n", [Client]),
-      NuevasSuscripciones = suscribir(Suscripciones, Channel, Client,Servers),
+      NuevasSuscripciones = suscribir(Suscripciones, Channel, Client),
       loop(NuevasSuscripciones, Servers, Sender);
     {unsubscribe, {Channel, Client}}->
       io:format("Client unsubscripted: ~p~n", [Client]),
-      NuevasSuscripciones = desuscribir(Suscripciones, Channel, Client,Servers),
+      NuevasSuscripciones = desuscribir(Suscripciones, Channel, Client),
       loop(NuevasSuscripciones, Servers, Sender);
     {emit, {Channel, Client, Message}}->
       io:format("Emitiendo ~n"),
@@ -56,26 +56,22 @@ removerServer(Server, Servers)->
   lists:keydelete(Server, 1, Servers).
 
 %Suscribe el cliente al channel deseado.
-suscribir(Suscripciones, Channel, Client, Servers)->
+suscribir(Suscripciones, Channel, Client)->
   %Buscar si existe la suscripcion en la lista.
   %Si existe agregarlo en la lista y si no crear el channel y ponerla.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
         case lists:keyfind(Client,1,SuscripcionesDelCanal) of
           false ->
-            try
               ClientesNuevos = [Client | SuscripcionesDelCanal],
               dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
-            catch
-              badarg -> io:format("BAD ARG")
-            end
         end;
     error ->
-        dict:append(Channel, [Client], Suscripciones)
+        dict:append(Channel, Client, Suscripciones)
   end.
 
 %desuscribe el cliente del channel deseado.
-desuscribir(Suscripciones, Channel, Client, Servers)->
+desuscribir(Suscripciones, Channel, Client)->
   %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->

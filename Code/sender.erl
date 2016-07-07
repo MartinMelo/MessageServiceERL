@@ -12,14 +12,6 @@ init()->
 loop()->
   receive
     {send, {Client, Msg}}->
-      io:format("Cliente ~w~n", Client),
-      try
-        Client ! {msg, Msg}
-      catch
-          badarg ->
-            io:format("Se Rompio al enviar al Cliente: ~p~n" , [Client]),
-            io:format("El Mensaje: ~p~n" , [Msg])
-
-      end
+      Client ! {msg, Msg}
   end.
 
