@@ -66,9 +66,6 @@ desuscribir(Suscripciones, Channel, Client)->
 emitir(Channel, Suscripciones, Client, Message, Sender, Servers)->
   emitirAServers(Channel, Client, Message, Sender, Servers),
   ClientesSuscriptos = obtenerClienteSuscriptos(Channel, Suscripciones,Client),
-  CSuscriptos = length(ClientesSuscriptos),
-  io:format("Clientes suscriptos! ~p~n",[CSuscriptos]),
-
   emitirAClientes(ClientesSuscriptos,Message,Sender).
 
 emitir(Channel, Suscripciones, Client, Message, Sender)->
