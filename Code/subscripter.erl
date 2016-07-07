@@ -41,5 +41,9 @@ allChannels(Suscripciones)->
 
 %TODO: Foldear para eliminar todas las suscriciones del cliente.
 unsubscribeAll(Client, Suscripciones)->
-  %lists:foreach(fun(Channel)-> unsubscribe(Channel, Client, Suscripciones) end, allChannels(Suscripciones)).
-  Suscripciones.
+  dict:fold(
+    fun(Channel,Subs,NewDict) ->
+      SubsNuevas = lists:delete(Client, Subs),
+      dict:append(Channel,SubsNuevas ,NewDict) end,
+    dict:new(),
+    Suscripciones).

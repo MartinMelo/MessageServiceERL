@@ -27,8 +27,8 @@ loop(Router, Server)->
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
       loop(Router, Server);
-    {desubscribe, Channel}->
-      Server ! {desubscribe, {Channel , self()}},
+    {unsubscribe, Channel}->
+      Server ! {unsubscribe, {Channel , self()}},
       loop(Router, Server);
     {msg, Msg}->
       procesarMensaje(Msg),
