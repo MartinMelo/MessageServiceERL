@@ -21,8 +21,8 @@ unsubscribe(Channel, Client, Suscripciones)->
 %Buscar el channel en la lista y borrar el client del channel.
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
-      ClientesNuevos = lists:keydelete(Client,1,SuscripcionesDelCanal);
-      dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
+      ClientesNuevos = lists:keydelete(Client,1,SuscripcionesDelCanal),
+      dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones);
     error->Suscripciones
   end.
 
