@@ -11,7 +11,7 @@ subscribe(Channel, Client, Suscripciones)->
       case lists:keyfind(Client,1,SuscripcionesDelCanal) of
         false ->
           ClientesNuevos = [Client | SuscripcionesDelCanal],
-          dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
+          dict:update(Channel, fun(_)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
       end;
     error ->
       dict:append(Channel, Client, Suscripciones)
@@ -23,7 +23,7 @@ unsubscribe(Channel, Client, Suscripciones)->
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
       ClientesNuevos = lists:keydelete(Client,1,SuscripcionesDelCanal),
-      dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones);
+      dict:update(Channel, fun(_)-> ClientesNuevos end,ClientesNuevos, Suscripciones);
     error->Suscripciones
   end.
 
@@ -39,7 +39,7 @@ clientesSubscriptos(Channel, Suscripciones, Client)->
 allChannels(Suscripciones)->
   dict:fetch_keys(Suscripciones).
 
-%TODO: Foldear para eliminar todas las suscriciones del cliente.
+%Elimina todas las suscripciones del cliente.
 unsubscribeAll(Client, Suscripciones)->
   dict:fold(
     fun(Channel,Subs,NewDict) ->

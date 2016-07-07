@@ -12,7 +12,8 @@ init()->
 loop()->
   receive
     {send, {Client, Msg}}->
-      Client ! {msg, Msg},
+      Time = erlang:system_time(),
+      Client ! {msg, Msg, Time},
       loop()
   end.
 

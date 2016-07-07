@@ -24,14 +24,17 @@ loop(Router, Server)->
     {emit, Channel, Msg}->
       Server ! {emit, {Channel, self(), Msg}},
       loop(Router, Server);
+    {broadcast, Message}->
+      Server ! {broadcast, Message},
+      loop(Router, Server);
     {subscribe, Channel}->
       Server ! {subscribe, {Channel , self()}},
       loop(Router, Server);
     {unsubscribe, Channel}->
       Server ! {unsubscribe, {Channel , self()}},
       loop(Router, Server);
-    {msg, Msg}->
-      procesarMensaje(Msg),
+    {msg, Msg , Time}->
+      procesarMensaje(Msg, Time),
       loop(Router, Server);
     disconnect->
       Server ! {disconnect , self()},
@@ -40,5 +43,6 @@ loop(Router, Server)->
 
 closeMessage()->io:format("Connection closed.~n Good bye!!!!~n").
 
-procesarMensaje(Msg)->
-  io:format("Mensaje recibido: ~p~n",[Msg]).
+procesarMensaje(Msg, Time)->
+  io:format("Mensaje recibido: ~p~n",[Msg]),
+  io:format("a las: ~p~n",[Time]).

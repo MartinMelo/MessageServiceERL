@@ -51,6 +51,12 @@ loop(Suscripciones, Servers,Clients, Sender)->
     {connect, Client}->
       monitor(process, Client),
       loop(Suscripciones,Servers,[Client | Clients],Sender);
+    {broadcast, Message}->
+      broadcastear(Servers, Clients, Message,Sender),
+      loop(Suscripciones,Servers,Clients,Sender);
+    {broadcast, Message, imServer}->
+      broadcastear(Clients, Message,Sender),
+      loop(Suscripciones,Servers,Clients,Sender);
     {disconnect, Client}->
       io:format("Client ~w Disconnected; ~n", [Client]),
       io:format("Cleaning subscription from client ~n"),
@@ -64,6 +70,15 @@ loop(Suscripciones, Servers,Clients, Sender)->
       imprimirEstado(Suscripciones, Servers, Clients),
       loop(Suscripciones,Servers,Clients,Sender)
   end.
+
+broadcastear(Clients, Message, Sender)->
+  emitirAClientes(Clients,Message,Sender).
+broadcastear(Servers , Clients, Message, Sender)->
+  broadcastearAServer(Servers, Message),
+  emitirAClientes(Clients,Message,Sender).
+
+broadcastearAServer(Servers, Message)->
+  lists:map(fun(Server)-> Server ! {broadcast, Message, imServer} end, Servers).
 
 imprimirEstado(Suscripciones, Servers,Clients)->
   io:format("Servers disponibles: ~p~n", [length(Servers)]),
@@ -83,7 +98,7 @@ desuscribir(Suscripciones, Channel, Client)->
   subscripter:unsubscribe(Channel,Client,Suscripciones).
 
 emitir(Channel, Suscripciones, Client, Message, Sender, Servers)->
-  emitirAServers(Channel, Client, Message, Sender, Servers),
+  emitirAServers(Channel, Client, Message, Servers),
   ClientesSuscriptos = obtenerClienteSuscriptos(Channel, Suscripciones,Client),
   emitirAClientes(ClientesSuscriptos,Message,Sender).
 
@@ -97,7 +112,7 @@ obtenerClienteSuscriptos(Channel, Suscripciones, Client)->
 emitirAClientes(ClientesSuscriptos,Message,Sender)->
   lists:map(fun(Cliente)-> Sender ! {send, {Cliente, Message}} end, ClientesSuscriptos).
 
-emitirAServers(Channel,Client, Message, Sender, Servers)->
+emitirAServers(Channel,Client, Message, Servers)->
   lists:map(fun(Server)-> Server ! {emit, {Channel, Client, Message, imServer}} end, Servers).
 
 
