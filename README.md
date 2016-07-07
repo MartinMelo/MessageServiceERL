@@ -38,17 +38,17 @@ El cliente podra Suscribirse, Revocar suscripciones y emitir a un canal especifi
 
 ## Diseño
 <div align="center">
-        <img width="50%" src="Sistemas distribuidos.jpg" title="Diseño"</img>
+        <img width="50%" src="Flujo de proceso/Sistemas distribuidos.jpg" title="Diseño"</img>
         <img height="50%" width="8px">
 </div>
 
 <div align="center">
-        <img width="50%" src="pas2.jpg" title="Diseño2"</img>
+        <img width="50%" src="Flujo de proceso/pas2.jpg" title="Diseño2"</img>
         <img height="50%" width="8px">
 </div>
 
 <div align="center">
-        <img width="50%" src="pas3.jpg" title="Diseño3"</img>
+        <img width="50%" src="Flujo de proceso/pas3.jpg" title="Diseño3"</img>
         <img height="50%" width="8px">
 </div>
 
