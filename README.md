@@ -35,6 +35,24 @@ El cual informa que se debe realizar un envio de un mensaje a todos los "Cliente
 ## Client
 El cliente podra Suscribirse, Revocar suscripciones y emitir a un canal especifico.
 
+
+## Diseño
+<div align="center">
+        <img width="50%" src="Sistemas distribuidos.jpg" title="Diseño"</img>
+        <img height="50%" width="8px">
+</div>
+
+<div align="center">
+        <img width="50%" src="pas2.jpg" title="Diseño2"</img>
+        <img height="50%" width="8px">
+</div>
+
+<div align="center">
+        <img width="50%" src="pas3.jpg" title="Diseño3"</img>
+        <img height="50%" width="8px">
+</div>
+
+
 # Sobre MQTT
 
 ### What is MQTT?
@@ -93,4 +111,136 @@ La consola del cliente A deberia imprimir:
 
 ```
 (ClienteA@ip)>Mensaje recibido: Mansae
+```
+
+
+
+#Ejemplo con 2 servers y 3 clientes:
+
+Router
+
+```erlang
+Marina:Code mrivero$ erl -name router@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(router@192.168.0.104)8> R = spawn(router, start, []).
+<0.75.0>
+(router@192.168.0.104)9> 
+(router@192.168.0.104)9> 
+(router@192.168.0.104)9> 
+register server with PID: <10085.42.0>
+register server with PID: <10086.42.0>
+(router@192.168.0.104)9> 
+(router@192.168.0.104)9> 
+(router@192.168.0.104)9> 
+server requested from client: <10087.41.0>
+Server to connect: <10086.42.0>
+server requested from client: <10091.41.0>
+Server to connect: <10085.42.0>
+server requested from client: <10092.41.0>
+Server to connect: <10085.42.0>
+```
+
+Server 1
+```erlang
+Marina:Code mrivero$ erl -name server@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(server@192.168.0.104)1> S = server:start().          
+<0.42.0>
+(server@192.168.0.104)2> {router, 'router@192.168.0.104'} ! {register, S}.
+{register,<0.42.0>}
+Brother List: []         
+Brother added: <7385.42.0>
+Client subscripted: <7387.41.0>
+Client subscripted: <7388.41.0>
+Emit recibed from another server 
+Emitiendo                
+Emitiendo                
+Emit recibed from another server 
+Emitiendo                
+Emit recibed from another server 
+```
+
+Server 2
+```erlang
+Marina:Code mrivero$ erl -name server2@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(server2@192.168.0.104)1> SS = server:start().
+<0.42.0>
+(server2@192.168.0.104)2> {router, 'router@192.168.0.104'} ! {register, SS}.
+{register,<0.42.0>}
+Brother List: [<7387.42.0>]
+Client subscripted: <7388.41.0>
+Emitiendo                 
+Emit recibed from another server 
+Client subscripted: <7388.41.0>
+Emit recibed from another server 
+Emitiendo                 
+Emit recibed from another server 
+Emitiendo      
+```
+
+Cliente 1
+```erlang
+Marina:Code mrivero$ erl -name client@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(client@192.168.0.104)1> Soraya = client:start({router, 'router@192.168.0.104'}).
+Conectando a Router {router,'router@192.168.0.104'}
+<0.41.0>
+(client@192.168.0.104)2> Soraya ! {subscribe, "Nandito"}.                        
+{subscribe,"Nandito"}
+(client@192.168.0.104)3> Soraya ! {emit, "Nandito", "Te dije que no te metieras con el, pero lo hiciste! MAldita lisiada del demonio!"}.
+{emit,"Nandito",
+      "Te dije que no te metieras con el, pero lo hiciste! MAldita lisiada del demonio!"}
+Mensaje recibido: "Soraya nooo"
+(client@192.168.0.104)4> Soraya ! {subscribe, "LaLocaSoraya"}.                                                                          
+{subscribe,"LaLocaSoraya"}
+Mensaje recibido: "No te metas con mi niña!"                  
+(client@192.168.0.104)5> Soraya ! {emit, "LaLocaSoraya", "Sal de aqui vieja zorra"}.                                                    
+{emit,"LaLocaSoraya","Sal de aqui vieja zorra"}
+Mensaje recibido: "Nooo noooo"
+(client@192.168.0.104)6> Soraya ! {emit, "Nandito", "Escuincla babosaaa"}.          
+{emit,"Nandito","Escuincla babosaaa"}
+```
+
+Cliente 2
+```erlang
+Marina:Code mrivero$ erl -name clientdos@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(clientdos@192.168.0.104)1> Alicia = client:start({router, 'router@192.168.0.104'}). 
+Conectando a Router {router,'router@192.168.0.104'}
+<0.41.0>
+(clientdos@192.168.0.104)2> Alicia ! {subscribe, "Nandito"}.
+{subscribe,"Nandito"}
+Mensaje recibido: "Te dije que no te metieras con el, pero lo hiciste! MAldita lisiada del demonio!"
+(clientdos@192.168.0.104)3> Alicia ! {emit, "Nandito", "Soraya nooo"}.
+{emit,"Nandito","Soraya nooo"}
+(clientdos@192.168.0.104)4> Alicia ! {emit, "Nandito", "Nooo noooo"}. 
+{emit,"Nandito","Nooo noooo"}
+Mensaje recibido: "Escuincla babosaaa"
+```
+
+Cliente 3
+```erlang
+Marina:Code mrivero$ erl -name clienttres@192.168.0.104 -setcookie secret
+Erlang/OTP 18 [erts-7.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Eshell V7.1  (abort with ^G)
+(clienttres@192.168.0.104)1> LaViejaZorra = client:start({router, 'router@192.168.0.104'}).
+Conectando a Router {router,'router@192.168.0.104'}
+<0.41.0>
+(clienttres@192.168.0.104)2> LaViejaZorra ! {subscribe, "LaLocaSoraya"}.
+{subscribe,"LaLocaSoraya"}
+(clienttres@192.168.0.104)3> LaViejaZorra ! {emit, "LaLocaSoraya", "No te metas con mi niña!"}.
+{emit,"LaLocaSoraya","No te metas con mi niña!"}
+Mensaje recibido: "Sal de aqui vieja zorra"
 ```
