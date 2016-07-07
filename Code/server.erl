@@ -4,7 +4,7 @@
 
 start()->
   Sender = sender:start(),
-  spawn(fun() -> init(dict:new(),[],Sender) end).
+  spawn(fun() -> init(subscripter:new(),[],Sender) end).
 
 init(Suscripciones, Servers, Sender)->
   loop(Suscripciones, Servers,Sender).
@@ -57,27 +57,11 @@ removerServer(Server, Servers)->
 
 %Suscribe el cliente al channel deseado.
 suscribir(Suscripciones, Channel, Client)->
-  %Buscar si existe la suscripcion en la lista.
-  %Si existe agregarlo en la lista y si no crear el channel y ponerla.
-  case dict:find(Channel, Suscripciones) of
-    {ok, SuscripcionesDelCanal} ->
-        case lists:keyfind(Client,1,SuscripcionesDelCanal) of
-          false ->
-              ClientesNuevos = [Client | SuscripcionesDelCanal],
-              dict:update(Channel, fun(ClienteViejos)-> ClientesNuevos end,ClientesNuevos, Suscripciones)
-        end;
-    error ->
-        dict:append(Channel, Client, Suscripciones)
-  end.
+  subscripter:subscribe(Channel, Client, Suscripciones).
 
 %desuscribe el cliente del channel deseado.
 desuscribir(Suscripciones, Channel, Client)->
-  %Buscar el channel en la lista y borrar el client del channel.
-  case dict:find(Channel, Suscripciones) of
-    {ok, SuscripcionesDelCanal} ->
-      lists:keydelete(Client,1,SuscripcionesDelCanal);
-    error->Suscripciones
-  end.
+  subscripter:unsubscribe(Channel,Client,Suscripciones).
 
 emitir(Channel, Suscripciones, Client, Message, Sender, Servers)->
   emitirAServers(Channel, Client, Message, Sender, Servers),
@@ -92,11 +76,7 @@ emitir(Channel, Suscripciones, Client, Message, Sender)->
   emitirAClientes(ClientesSuscriptos,Message,Sender).
 
 obtenerClienteSuscriptos(Channel, Suscripciones, Client)->
-  %Informar que hay para emitir.
-  case dict:find(Channel, Suscripciones) of
-    {ok, SuscripcionesDelCanal} -> SuscripcionesDelCanal;%Sacar el cliente de la lista, para no recibir lo que envio.
-    error-> []
-  end.
+  subscripter:clientesSubscriptos(Channel, Suscripciones,Client).
 
 emitirAClientes(ClientesSuscriptos,Message,Sender)->
   lists:map(fun(Cliente)-> Sender ! {send, {Cliente, Message}} end, ClientesSuscriptos).
