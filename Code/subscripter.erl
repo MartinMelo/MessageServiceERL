@@ -31,7 +31,7 @@ unsubscribe(Channel, Client, Suscripciones)->
 clientesSubscriptos(Channel, Suscripciones, Client)->
   case dict:find(Channel, Suscripciones) of
     {ok, SuscripcionesDelCanal} ->
-      lists:keydelete(Client,1,SuscripcionesDelCanal);
+      lists:delete(Client,SuscripcionesDelCanal);
     error-> []
   end.
 
