@@ -63,8 +63,8 @@ loop(Suscripciones, Servers, Sender)->
   end.
 
 imprimirEstado(Suscripciones, Servers)->
-  io:format("Servers disponibles: ~p~n", Servers),
-  io:format("Suscripciones disponibles: ~p~n", dict:to_list(Suscripciones)).
+  io:format("Servers disponibles: ~p~n", [length(Servers)]),
+  io:format("Suscripciones disponibles: ~p~n", [length(dict:fetch_keys(Suscripciones))]).
 
 %Remueve el server de la lista de servers.
 removerServer(Server, Servers)->
