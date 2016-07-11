@@ -11,34 +11,34 @@ El client necesitara unicamente 2 datos para funcionar:
 
 Sus funciones son:
 
--Emit: envia el mensaje al servidor.
--Subscribe: envia la peticion de suscripcion al servidor del canal deseado.
--Desubscribe: envia la peticion de revocar la suscripcion al servidor 
+- Emit: envia el mensaje al servidor.
+- Subscribe: envia la peticion de suscripcion al servidor del canal deseado.
+- Desubscribe: envia la peticion de revocar la suscripcion al servidor 
 del canal deseado.
--Msg: procesa el mensaje recibido, depende de la implementación que se haga en cada caso puntual. En este tp se imprime el mensaje en pantalla.
--Disconect: se desconecta del server.
+- Msg: procesa el mensaje recibido, depende de la implementación que se haga en cada caso puntual. En este tp se imprime el mensaje en pantalla.
+- Disconect: se desconecta del server.
 
 ###### Server
 
--Register: se registra en el router.
--Brothers: mediante este mensaje conoce a los demas servers.
--Subscribe: subscribe al cliente en un determinado channel.
--Emit: envía mensaje del cliente, y comunica a los demás servers de este mensaje.
--Connect: el server comienza a escuchar peticiones del cliente.
--Broadcast: informa que se debe realizar un envio de un mensaje a todos los clientes conectados.
+- Register: se registra en el router.
+- Brothers: mediante este mensaje conoce a los demas servers.
+- Subscribe: subscribe al cliente en un determinado channel.
+- Emit: envía mensaje del cliente, y comunica a los demás servers de este mensaje.
+- Connect: el server comienza a escuchar peticiones del cliente.
+- Broadcast: informa que se debe realizar un envio de un mensaje a todos los clientes conectados.
 
 
 ###### Router
 
--Register: registra al server. Esto significa que este server esta disponible para ser designado a un cliente.
+- Register: registra al server. Esto significa que este server esta disponible para ser designado a un cliente.
 -Unregister: Elimina el servidor.
--Request: mensaje por el cual un cliente se conecta al servicio. Este le asigna un server al cliente.
+- Request: mensaje por el cual un cliente se conecta al servicio. Este le asigna un server al cliente.
 
 ###### Sender
 
 - Send: envia mensaje al cliente.
 
-##DOCUMENTACION
+##DOCUMENTACIÓN
 
 ###### Server
 
@@ -58,7 +58,16 @@ Maneja a los servidores, asignadolos a un cliente. Es el punto de unificacion en
 El sender es un modulo ampliable, lo que hace en esta implementacion es delegar el mensaje en el cliente, siendo un pasamanos entre el servidor y el cliente cuando este emite un mensaje.
 
 
-## Diseño
+## Arquitectura
+
+<div align="center">
+        <img width="50%" src="Flujo de proceso/Arquitectura.jpg" title="ARqui"</img>
+        <img height="50%" width="8px">
+</div>
+
+
+## Comportamiento
+
 <div align="center">
         <img width="50%" src="Flujo de proceso/Sistemas distribuidos.jpg" title="Diseño"</img>
         <img height="50%" width="8px">
