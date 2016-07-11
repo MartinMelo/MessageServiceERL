@@ -1,7 +1,9 @@
 
-#COMPORTAMIENTO DE LOS DISTINTOS MODULOS
+#MESSY
 
-### client:
+##Comportamiento de los distintos módulos
+
+###### Client
 
 El client necesitara unicamente 2 datos para funcionar:
 -Nombre de host
@@ -9,31 +11,51 @@ El client necesitara unicamente 2 datos para funcionar:
 
 Sus funciones son:
 
--Emit: Envia el mensaje al servidor.
--Subscribe: Envia la peticion de suscripcion al servidor del canal deseado.
--Desubscribe: Envia la peticion de revocar la suscripcion al servidor 
-del canal deseado.88i  mmmiuikki
+-Emit: envia el mensaje al servidor.
+-Subscribe: envia la peticion de suscripcion al servidor del canal deseado.
+-Desubscribe: envia la peticion de revocar la suscripcion al servidor 
+del canal deseado.
+-Msg: procesa el mensaje recibido, depende de la implementación que se haga en cada caso puntual. En este tp se imprime el mensaje en pantalla.
+-Disconect: se desconecta del server.
 
-### server:
+###### Server
+
+-Register: se registra en el router.
+-Brothers: mediante este mensaje conoce a los demas servers.
+-Subscribe: subscribe al cliente en un determinado channel.
+-Emit: envía mensaje del cliente, y comunica a los demás servers de este mensaje.
+-Connect: el server comienza a escuchar peticiones del cliente.
+-Broadcast: informa que se debe realizar un envio de un mensaje a todos los clientes conectados.
 
 
+###### Router
 
-#DOCUMENTACION
+-Register: registra al server. Esto significa que este server esta disponible para ser designado a un cliente.
+-Unregister: Elimina el servidor.
+-Request: mensaje por el cual un cliente se conecta al servicio. Este le asigna un server al cliente.
 
-## Server
-El server recibira 4 mensajes basicos:
+###### Sender
 
-### Subscribe
-El cual informa que quien envia el mensaje desea ser suscripto a un canal especifico.
-### Unsubscribe
-El cual informa que quien envia el mensaje desea revocar su suscripcion a un canal especifico.
-### Emit
-El cual informa que se debe realizar un envio de un mensaje a todos los "Clientes" suscriptos a ese canal.
-### Broadcast
-El cual informa que se debe realizar un envio de un mensaje a todos los "Clientes" conectados.
+- Send: envia mensaje al cliente.
 
-## Client
-El cliente podra Suscribirse, Revocar suscripciones y emitir a un canal especifico.
+##DOCUMENTACION
+
+###### Server
+
+Este modulo se encarga de escuhar las peticiones de los clientes, ya sea emitir un mensaje o hacer broadcast de un mensaje. También recibe mensajes del estilo state que da a conocer el stado de subscripciones y los clientes conectados. El servidor conoce a todos los servidores conectados, de esta forma los mensajes se propagan entre los channels que se encuentra de forma distribuida en distintos servidores.
+Cuando un cliente se cae, el server lo elimina de las subscripciones. El cliente debera volver a conectarse para poder seguir funcionando.
+
+###### Client
+
+El cliente podra Suscribirse, Revocar suscripciones y emitir a un canal especifico. Se conecta mediante el router, el cual le pide la conexion y este le asigna un server. El cliente tiene el poder desconectarse del servidor, eliminandose de las subscripcion.
+
+###### Router
+
+Maneja a los servidores, asignadolos a un cliente. Es el punto de unificacion entre los servers, y la interfaz para que el cliente se pueda conectar y el servidor se pueda registrar.
+
+###### Sender
+
+El sender es un modulo ampliable, lo que hace en esta implementacion es delegar el mensaje en el cliente, siendo un pasamanos entre el servidor y el cliente cuando este emite un mensaje.
 
 
 ## Diseño
