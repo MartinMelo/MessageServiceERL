@@ -38,7 +38,7 @@ del canal deseado.
 
 - Send: envia mensaje al cliente.
 
-##DOCUMENTACIÓN
+##Documentación
 
 ###### Server
 
